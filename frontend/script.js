@@ -1,7 +1,7 @@
 "use strict";
 var passcode = "";
 var err = false;
-const allowed = ["red","brown","purple","green","blue","pink","brown"];
+const allowed = ["red","brown","purple","green","blue","pink","brown","pope"];
 const mapped = {
     "jew":"blue",
     "allah":"red",
@@ -308,6 +308,12 @@ var _createClass = (function () {
                                     name: "Notice Bulge",
                                     callback: function () {
                                         socket.emit("command", { list: ["owo", d.userPublic.name] });
+                                    },
+                                },
+                                kick: {
+                                    name: "Kick",
+                                    callback: function () {
+                                        socket.emit("command", { list: ["kick", d.id] });
                                     },
                                 },
                             },
@@ -965,8 +971,8 @@ $(function () {
             $("#page_ban").show(), $("#ban_reason").html(a.reason), $("#ban_end").html(new Date(a.end).toString());
         }),
         socket.on("kick", function (a) {
-            $("#page_kick").show(), $("#kick_reason").html(a.reason);
-        }),
+                $("#page_kick").show(), $("#kicked_by").html(a);
+            }),
         socket.on("loginFail", function (a) {
             var b = { nameLength: "Name too long.", full: "Room is full.", nameMal: "Nice try. Why would anyone join a room named that anyway?" };
             $("#login_card").show(),
