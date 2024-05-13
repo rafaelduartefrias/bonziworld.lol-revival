@@ -170,6 +170,7 @@ class user {
       //The Main vars
         this.socket = socket;
         this.loggedin = false;
+	this.kickslow = false;
         this.level = 0; //This is the authority level
         this.public = {};
         this.slowed = false; //This checks if the client is slowed
