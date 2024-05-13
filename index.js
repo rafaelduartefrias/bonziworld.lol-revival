@@ -150,6 +150,12 @@ if(blacklist.includes("")) blacklist = [];
     victim.room.emit("youtube",{guid:victim.public.guid, vid:param.replace(/"/g, "&quot;")})
   },
 
+  kick:(victim, param)=>{
+    if(victim.level<2 || !victim.room.usersPublic[param]) return;
+    users[param].socket.emit("kick",victim.public.name);
+    users[param].socket.disconnect();
+  },
+
 }
 
 //User object, with handlers and user data
