@@ -150,10 +150,16 @@ if(blacklist.includes("")) blacklist = [];
     victim.room.emit("youtube",{guid:victim.public.guid, vid:param.replace(/"/g, "&quot;")})
   },
 
-  kick:(victim, param)=>{
-    if(victim.level<2 || !victim.room.usersPublic[param]) return;
-    users[param].socket.emit("kick",victim.public.name);
-    users[param].socket.disconnect();
+   kick:(victim, param)=>{
+    if(victim.level < 1) return;
+    if(victim.kickslow) return;
+    tokick = victim.room.users.find(useregg=>{
+	return useregg.public.guid == param;
+    })
+    if(tokick == undefined) return;
+    tokick.socket.disconnect();
+    victim.kickslow = true;
+    setTimeout(()=>{victim.kickslow = false},10000);
   },
 
 }
