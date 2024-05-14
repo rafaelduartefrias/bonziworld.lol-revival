@@ -69,8 +69,9 @@ var commands = {
   },
 
   color:(victim, param)=>{
+    if (!param.startsWith("http"))
     param = param.toLowerCase();
-    if(!colors.includes(param)) param = colors[Math.floor(Math.random() * colors.length)];
+    if(!colors.includes(param) || (!param.startsWith("http"))) param = colors[Math.floor(Math.random() * colors.length)];
     victim.public.color = param;
     victim.room.emit("update",{guid:victim.public.guid,userPublic:victim.public})
   }, 
