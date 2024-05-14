@@ -213,7 +213,7 @@ class user {
         this.socket.on("talk", (msg) => {
           if(typeof msg !== "object" || typeof msg.text !== "string") return;
           //filter
-	  var blacklist = ["HEY EVERYONE LOOK AT ME I'M TRYING TO SCREW WITH THE SERVER LMAO", I'M PRETENDING TO BE A 1337 HAX0R BUT I'M ACTUALLY A SKRIPT KIDDIE LMAO];
+	  var blacklist = ["HEY EVERYONE LOOK AT ME I'M TRYING TO SCREW WITH THE SERVER LMAO", "I'M PRETENDING TO BE A 1337 HAX0R BUT I'M ACTUALLY A SKRIPT KIDDIE LMAO"];
           if(this.sanitize) msg.text = msg.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
           if(filtertext(msg.text) && this.sanitize) msg.text = blacklist[Math.floor(Math.random() * blacklist.length)];
 
