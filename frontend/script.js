@@ -593,16 +593,15 @@ var _createClass = (function () {
                         var b = BonziHandler.stage;
                         if(!allowed.includes(this.color)) this.color = colormap(this.color);
                         this.cancel(),
-                            b.removeChild(this.sprite),
                         b.removeChild(this.sprite);
                         if (this.color.startsWith("http")) {
                             var d = { images: [this.color], frames: BonziData.sprite.frames, animations: BonziData.sprite.animations }
                             var shjeet = new createjs.SpriteSheet(d);
                             this.colorPrev != this.color && (delete this.sprite, (this.sprite = new createjs.Sprite(shjeet, a ? "gone" : "idle")));
                         } else {
-                            this.colorPrev != this.color && (delete this.sprite, (this.sprite = new createjs.Sprite(BonziHandler.spriteSheets[this.color], a ? "gone" : "idle"))),
+                            this.colorPrev != this.color && (delete this.sprite, (this.sprite = new createjs.Sprite(BonziHandler.spriteSheets[this.color], a ? "gone" : "idle")));
                         }
-                            b.addChild(this.sprite),
+                            b.addChild(this.sprite);
                             this.move();
                     },
                 },
