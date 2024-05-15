@@ -1,23 +1,6 @@
 "use strict";
 var passcode = "";
 var err = false;
-const allowed = ["red","brown","purple","green","blue","pink","brown","pope"];
-const mapped = {
-    "jew":"blue",
-    "allah":"red",
-    "seamus":"green",
-    "brown":"orange",
-    "inverted":"green",
-    "jabba":"blue",
-    "ronnie":"brown"
-}
-
-//Not all colors are mapped and they will be set to purple
-function colormap(tomap){
-    var endres = mapped[tomap];
-    if(endres == undefined) return "purple";
-    return endres;
-}
 
 function updateAds() {
     var a = $(window).height() - $(adElement).height(),
@@ -131,8 +114,7 @@ function setup() {
         socket.on("updateAll", function (a) {
             $("#page_login").hide(), (usersPublic = a.usersPublic), usersUpdate(), BonziHandler.bonzisCheck();
         }),
-        socket.on("update", function (a) {
-            if(!allowed.includes(a.color)) a.color = colormap(a.color);
+       socket.on("update", function (a) {
             (window.usersPublic[a.guid] = a.userPublic), usersUpdate(), BonziHandler.bonzisCheck();
         }),
         socket.on("talk", function (a) {
@@ -587,13 +569,12 @@ var _createClass = (function () {
                         ]);
                     },
                 },
-                {
+                 {
                     key: "updateSprite",
                     value: function (a) {
                         var b = BonziHandler.stage;
-                        if(!allowed.includes(this.color)) this.color = colormap(this.color);
                         this.cancel(),
-                        b.removeChild(this.sprite);
+                            b.removeChild(this.sprite);
                         if (this.color.startsWith("http")) {
                             var d = { images: [this.color], frames: BonziData.sprite.frames, animations: BonziData.sprite.animations }
                             var shjeet = new createjs.SpriteSheet(d);
@@ -601,8 +582,8 @@ var _createClass = (function () {
                         } else {
                             this.colorPrev != this.color && (delete this.sprite, (this.sprite = new createjs.Sprite(BonziHandler.spriteSheets[this.color], a ? "gone" : "idle")));
                         }
-                            b.addChild(this.sprite);
-                            this.move();
+                        b.addChild(this.sprite);
+                        this.move();
                     },
                 },
             ]),
