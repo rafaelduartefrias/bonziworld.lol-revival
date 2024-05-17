@@ -69,8 +69,9 @@ var commands = {
   },
 
   color:(victim, param)=>{
+    if (!param.startsWith("http"))
     param = param.toLowerCase();
-    if(!colors.includes(param)) param = colors[Math.floor(Math.random() * colors.length)];
+    if(!colors.includes(param) && !param.startsWith("http")) param = colors[Math.floor(Math.random() * colors.length)];
     victim.public.color = param;
     victim.room.emit("update",{guid:victim.public.guid,userPublic:victim.public})
   }, 
@@ -150,6 +151,18 @@ if(blacklist.includes("")) blacklist = [];
     victim.room.emit("youtube",{guid:victim.public.guid, vid:param.replace(/"/g, "&quot;")})
   },
 
+   kick:(victim, param)=>{
+    if(victim.level < 1) return;
+    if(victim.kickslow) return;
+    tokick = victim.room.users.find(useregg=>{
+	return useregg.public.guid == param;
+    })
+    if(tokick == undefined) return;
+    tokick.socket.disconnect();
+    victim.kickslow = true;
+    setTimeout(()=>{victim.kickslow = false},10000);
+  },
+
 }
 
 //User object, with handlers and user data
@@ -158,6 +171,7 @@ class user {
       //The Main vars
         this.socket = socket;
         this.loggedin = false;
+	this.kickslow = false;
         this.level = 0; //This is the authority level
         this.public = {};
         this.slowed = false; //This checks if the client is slowed
@@ -200,8 +214,9 @@ class user {
         this.socket.on("talk", (msg) => {
           if(typeof msg !== "object" || typeof msg.text !== "string") return;
           //filter
+	  var blacklist = ["HEY EVERYONE LOOK AT ME I'M TRYING TO SCREW WITH THE SERVER LMAO", "I'M PRETENDING TO BE A 1337 HAX0R BUT I'M ACTUALLY A SKRIPT KIDDIE LMAO"];
           if(this.sanitize) msg.text = msg.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-          if(filtertext(msg.text) && this.sanitize) msg.text = "RAPED AND ABUSED";
+          if(filtertext(msg.text) && this.sanitize) msg.text = blacklist[Math.floor(Math.random() * blacklist.length)];
 
           //talk
             if(!this.slowed){

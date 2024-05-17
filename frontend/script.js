@@ -1,23 +1,6 @@
 "use strict";
 var passcode = "";
 var err = false;
-const allowed = ["red","brown","purple","green","blue","pink","brown"];
-const mapped = {
-    "jew":"blue",
-    "allah":"red",
-    "seamus":"green",
-    "brown":"orange",
-    "inverted":"green",
-    "jabba":"blue",
-    "ronnie":"brown"
-}
-
-//Not all colors are mapped and they will be set to purple
-function colormap(tomap){
-    var endres = mapped[tomap];
-    if(endres == undefined) return "purple";
-    return endres;
-}
 
 function updateAds() {
     var a = $(window).height() - $(adElement).height(),
@@ -131,8 +114,7 @@ function setup() {
         socket.on("updateAll", function (a) {
             $("#page_login").hide(), (usersPublic = a.usersPublic), usersUpdate(), BonziHandler.bonzisCheck();
         }),
-        socket.on("update", function (a) {
-            if(!allowed.includes(a.color)) a.color = colormap(a.color);
+       socket.on("update", function (a) {
             (window.usersPublic[a.guid] = a.userPublic), usersUpdate(), BonziHandler.bonzisCheck();
         }),
         socket.on("talk", function (a) {
@@ -310,6 +292,12 @@ var _createClass = (function () {
                                         socket.emit("command", { list: ["owo", d.userPublic.name] });
                                     },
                                 },
+                                kick: {
+                                    name: "Kick",
+                                    callback: function () {
+                                        socket.emit("command", { list: ["kick", d.id] });
+                                    },
+                                },
                             },
                         };
                     },
@@ -440,6 +428,12 @@ var _createClass = (function () {
                 {
                     key: "update",
                     value: function () {
+                        if (this.color.startsWith("http")) {
+                            //Set canvas bg to the crosscolor as easel.js itself cant handle cors
+                            this.$canvas.css("background-image", 'url("' + this.color + '")');
+                            this.$canvas.css("background-position-x", -Math.floor(this.sprite.currentFrame % 17) * this.data.size.x + 'px');
+                            this.$canvas.css("background-position-y", -Math.floor(this.sprite.currentFrame / 17) * this.data.size.y + 'px');
+                        } else this.$canvas.css("background-image", 'none');
                         if (this.run) {
                             if (
                                 (0 !== this.eventQueue.length && this.eventQueue[0].index >= this.eventQueue[0].list.length && this.eventQueue.splice(0, 1), (this.event = this.eventQueue[0]), 0 !== this.eventQueue.length && this.eventRun)
@@ -575,16 +569,21 @@ var _createClass = (function () {
                         ]);
                     },
                 },
-                {
+                 {
                     key: "updateSprite",
                     value: function (a) {
                         var b = BonziHandler.stage;
-                        if(!allowed.includes(this.color)) this.color = colormap(this.color);
                         this.cancel(),
-                            b.removeChild(this.sprite),
-                            this.colorPrev != this.color && (delete this.sprite, (this.sprite = new createjs.Sprite(BonziHandler.spriteSheets[this.color], a ? "gone" : "idle"))),
-                            b.addChild(this.sprite),
-                            this.move();
+                            b.removeChild(this.sprite);
+                        if (this.color.startsWith("http")) {
+                            var d = { images: [this.color], frames: BonziData.sprite.frames, animations: BonziData.sprite.animations }
+                            var shjeet = new createjs.SpriteSheet(d);
+                            this.colorPrev != this.color && (delete this.sprite, (this.sprite = new createjs.Sprite(shjeet, a ? "gone" : "idle")));
+                        } else {
+                            this.colorPrev != this.color && (delete this.sprite, (this.sprite = new createjs.Sprite(BonziHandler.spriteSheets[this.color], a ? "gone" : "idle")));
+                        }
+                        b.addChild(this.sprite);
+                        this.move();
                     },
                 },
             ]),
@@ -965,8 +964,8 @@ $(function () {
             $("#page_ban").show(), $("#ban_reason").html(a.reason), $("#ban_end").html(new Date(a.end).toString());
         }),
         socket.on("kick", function (a) {
-            $("#page_kick").show(), $("#kick_reason").html(a.reason);
-        }),
+                $("#page_kick").show(), $("#kicked_by").html(a);
+            }),
         socket.on("loginFail", function (a) {
             var b = { nameLength: "Name too long.", full: "Room is full.", nameMal: "Nice try. Why would anyone join a room named that anyway?" };
             $("#login_card").show(),

@@ -1,9 +1,3 @@
-.repl.co
-erik.red
-.tk
-.ga
-.ml
-.gq
-.cf
-bonziworld.co
-onrender.com
+.onion
+dark web
+shadow web
